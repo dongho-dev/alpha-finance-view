@@ -16,82 +16,20 @@ import {
   BarChart3,
   Target
 } from "lucide-react";
+import { useEducationData } from "@/hooks/useSupabaseData";
 
 const Education = () => {
-  const courses = [
-    {
-      id: 1,
-      title: "주식 투자 기초",
-      description: "주식 투자의 기본 개념부터 실제 투자까지",
-      instructor: "김투자",
-      duration: "4시간",
-      level: "초급",
-      rating: 4.8,
-      students: 1250,
-      progress: 75,
-      category: "주식"
-    },
-    {
-      id: 2,
-      title: "포트폴리오 관리 전략",
-      description: "효율적인 포트폴리오 구성과 리밸런싱 방법",
-      instructor: "이자산",
-      duration: "3시간",
-      level: "중급",
-      rating: 4.9,
-      students: 890,
-      progress: 0,
-      category: "포트폴리오"
-    },
-    {
-      id: 3,
-      title: "기술적 분석 완전정복",
-      description: "차트 분석과 기술적 지표 활용법",
-      instructor: "박분석",
-      duration: "6시간",
-      level: "고급",
-      rating: 4.7,
-      students: 650,
-      progress: 30,
-      category: "분석"
-    },
-    {
-      id: 4,
-      title: "글로벌 ETF 투자 가이드",
-      description: "해외 ETF를 통한 글로벌 분산투자",
-      instructor: "최글로벌",
-      duration: "2.5시간",
-      level: "중급",
-      rating: 4.6,
-      students: 780,
-      progress: 0,
-      category: "ETF"
-    }
-  ];
+  const { courses, articles, loading } = useEducationData();
 
-  const articles = [
-    {
-      title: "2024년 투자 트렌드 분석",
-      summary: "올해 주목해야 할 투자 섹터와 종목들을 분석합니다.",
-      readTime: "5분",
-      category: "시장분석",
-      date: "2024-01-15"
-    },
-    {
-      title: "금리 인상이 주식시장에 미치는 영향",
-      summary: "중앙은행의 금리 정책이 투자 전략에 주는 시사점을 살펴봅니다.",
-      readTime: "8분",
-      category: "경제",
-      date: "2024-01-14"
-    },
-    {
-      title: "ESG 투자의 이해와 실천",
-      summary: "지속가능한 투자 전략으로 주목받는 ESG 투자에 대해 알아봅니다.",
-      readTime: "6분",
-      category: "투자전략",
-      date: "2024-01-13"
-    }
-  ];
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-muted-foreground">데이터를 불러오는 중...</div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   const tools = [
     {
@@ -183,30 +121,15 @@ const Education = () => {
                       <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center gap-1">
                           <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                          <span className="font-medium">{course.rating}</span>
-                          <span className="text-muted-foreground">({course.students}명)</span>
+                          <span className="font-medium">{Number(course.rating)}</span>
+                          <span className="text-muted-foreground">(수강생)</span>
                         </div>
-                        <Badge variant="outline">{course.category}</Badge>
+                        <Badge variant="outline">{course.level}</Badge>
                       </div>
 
-                      {course.progress > 0 && (
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">진행률</span>
-                            <span className="font-medium">{course.progress}%</span>
-                          </div>
-                          <div className="w-full bg-muted rounded-full h-2">
-                            <div 
-                              className="h-2 rounded-full bg-primary transition-all duration-300"
-                              style={{ width: `${course.progress}%` }}
-                            />
-                          </div>
-                        </div>
-                      )}
-
-                      <Button className="w-full" variant={course.progress > 0 ? "default" : "outline"}>
+                      <Button className="w-full" variant="outline">
                         <Play className="w-4 h-4 mr-2" />
-                        {course.progress > 0 ? "이어서 학습" : "학습 시작"}
+                        {course.price === "무료" ? "무료 학습" : `${course.price} - 학습 시작`}
                       </Button>
                     </div>
                   </CardContent>
@@ -226,8 +149,8 @@ const Education = () => {
                         <p className="text-muted-foreground mb-4 line-clamp-2">{article.summary}</p>
                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
                           <div className="flex items-center gap-1">
-                            <BookOpen className="w-4 h-4" />
-                            {article.readTime}
+                            <User className="w-4 h-4" />
+                            {article.author}
                           </div>
                           <Badge variant="outline">{article.category}</Badge>
                           <span>{article.date}</span>

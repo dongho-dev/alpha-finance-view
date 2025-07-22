@@ -16,11 +16,24 @@ import {
   Building,
   Plus,
   Search,
-  Filter
+  Filter,
+  MoreHorizontal
 } from "lucide-react";
+import { useAccountsData } from "@/hooks/useSupabaseData";
 
 const Assets = () => {
+  const { accounts, loading } = useAccountsData();
   const [searchTerm, setSearchTerm] = useState("");
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-muted-foreground">데이터를 불러오는 중...</div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   const assetCategories = [
     {
@@ -65,38 +78,7 @@ const Assets = () => {
     }
   ];
 
-  const accounts = [
-    {
-      name: "키움증권",
-      type: "증권계좌",
-      balance: 28500000,
-      lastUpdate: "2024-01-15",
-      status: "연결됨"
-    },
-    {
-      name: "신한은행",
-      type: "입출금통장",
-      balance: 12300000,
-      lastUpdate: "2024-01-15",
-      status: "연결됨"
-    },
-    {
-      name: "미래에셋증권",
-      type: "증권계좌",
-      balance: 42800000,
-      lastUpdate: "2024-01-15",
-      status: "연결됨"
-    },
-    {
-      name: "우리은행",
-      type: "정기예금",
-      balance: 10000000,
-      lastUpdate: "2024-01-14",
-      status: "연결됨"
-    }
-  ];
-
-  const totalAssets = assetCategories.reduce((sum, category) => sum + category.value, 0);
+  const totalAssets = accounts.reduce((sum, account) => sum + Number(account.balance), 0);
 
   return (
     <DashboardLayout>
@@ -218,11 +200,15 @@ const Assets = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {accounts.map((account) => (
-                    <div key={account.name} className="flex items-center justify-between p-4 rounded-lg bg-background hover:bg-muted/50 transition-colors">
+                  {accounts.map((account, index) => (
+                    <div key={index} className="flex items-center justify-between p-4 rounded-lg bg-background hover:bg-muted/50 transition-colors">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                          <Building className="w-6 h-6 text-primary" />
+                          {account.type === "증권계좌" ? (
+                            <TrendingUp className="w-6 h-6 text-primary" />
+                          ) : (
+                            <Building className="w-6 h-6 text-primary" />
+                          )}
                         </div>
                         <div>
                           <h3 className="font-semibold">{account.name}</h3>
@@ -230,14 +216,14 @@ const Assets = () => {
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="font-bold text-lg">{account.balance.toLocaleString()}원</div>
+                        <div className="font-bold text-lg">{Number(account.balance).toLocaleString()}원</div>
                         <div className="flex items-center gap-2">
-                          <Badge variant="secondary" className="text-xs">
+                          <Badge variant="default" className="text-xs">
                             {account.status}
                           </Badge>
-                          <span className="text-xs text-muted-foreground">
-                            {account.lastUpdate}
-                          </span>
+                          <Button variant="ghost" size="sm">
+                            <MoreHorizontal className="w-4 h-4" />
+                          </Button>
                         </div>
                       </div>
                     </div>

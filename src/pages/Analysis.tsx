@@ -11,15 +11,20 @@ import {
   Calendar,
   Download
 } from "lucide-react";
+import { usePerformanceData } from "@/hooks/useSupabaseData";
 
 const Analysis = () => {
-  const performanceData = [
-    { period: "1개월", return: 2.8, benchmark: 1.9 },
-    { period: "3개월", return: 8.4, benchmark: 6.2 },
-    { period: "6개월", return: 15.2, benchmark: 11.8 },
-    { period: "1년", return: 24.6, benchmark: 18.3 },
-    { period: "전체", return: 31.2, benchmark: 22.1 }
-  ];
+  const { performanceData, loading } = usePerformanceData();
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-muted-foreground">데이터를 불러오는 중...</div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   const riskMetrics = [
     { metric: "변동성 (연환산)", value: "18.5%", description: "과거 1년간 일일 수익률의 표준편차" },
@@ -74,22 +79,22 @@ const Analysis = () => {
 
           <TabsContent value="performance" className="space-y-6">
             {/* Performance Overview */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {performanceData.map((data) => (
                 <Card key={data.period} className="bg-gradient-card shadow-card">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-sm font-medium text-muted-foreground">{data.period}</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-success">+{data.return}%</div>
+                    <div className="text-2xl font-bold text-success">+{Number(data.portfolio_return)}%</div>
                     <div className="text-sm text-muted-foreground mt-1">
-                      벤치마크: +{data.benchmark}%
+                      벤치마크: +{Number(data.benchmark_return)}%
                     </div>
                     <Badge 
-                      variant={data.return > data.benchmark ? "default" : "secondary"}
+                      variant={Number(data.portfolio_return) > Number(data.benchmark_return) ? "default" : "secondary"}
                       className="mt-2 text-xs"
                     >
-                      {data.return > data.benchmark ? '+' : ''}{(data.return - data.benchmark).toFixed(1)}%
+                      {Number(data.portfolio_return) > Number(data.benchmark_return) ? '+' : ''}{(Number(data.portfolio_return) - Number(data.benchmark_return)).toFixed(1)}%
                     </Badge>
                   </CardContent>
                 </Card>

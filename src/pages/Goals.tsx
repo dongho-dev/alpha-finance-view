@@ -11,10 +11,15 @@ import {
   Calendar, 
   TrendingUp,
   DollarSign,
-  Clock
+  Clock,
+  Home,
+  GraduationCap,
+  Plane
 } from "lucide-react";
+import { useGoalsData } from "@/hooks/useSupabaseData";
 
 const Goals = () => {
+  const { goals: investmentGoals, loading } = useGoalsData();
   const [mainGoal, setMainGoal] = useState("5년 내 1억원 달성으로 내 집 마련하기");
   const [goalStrategy, setGoalStrategy] = useState(`월 200만원 적립식 투자
 - 국내주식 50%
@@ -22,41 +27,15 @@ const Goals = () => {
 - 채권 20%
 연평균 8% 수익률 목표`);
 
-  const investmentGoals = [
-    {
-      id: 1,
-      title: "내 집 마련 자금",
-      targetAmount: 100000000,
-      currentAmount: 45000000,
-      targetDate: "2029-01-01",
-      monthlyContribution: 2000000,
-      expectedReturn: 8,
-      status: "진행중",
-      progress: 45
-    },
-    {
-      id: 2,
-      title: "자녀 교육비",
-      targetAmount: 50000000,
-      currentAmount: 12000000,
-      targetDate: "2035-01-01",
-      monthlyContribution: 500000,
-      expectedReturn: 7,
-      status: "진행중",
-      progress: 24
-    },
-    {
-      id: 3,
-      title: "은퇴 자금",
-      targetAmount: 500000000,
-      currentAmount: 80000000,
-      targetDate: "2055-01-01",
-      monthlyContribution: 1000000,
-      expectedReturn: 6,
-      status: "진행중",
-      progress: 16
-    }
-  ];
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-muted-foreground">데이터를 불러오는 중...</div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   const calculateMonthsRemaining = (targetDate: string) => {
     const now = new Date();
@@ -139,21 +118,24 @@ const Goals = () => {
           <h2 className="text-xl font-semibold">투자 목표 현황</h2>
           
           {investmentGoals.map((goal) => {
-            const monthsRemaining = calculateMonthsRemaining(goal.targetDate);
+            const monthsRemaining = calculateMonthsRemaining(goal.target_date);
             const projectedAmount = calculateProjectedAmount(
-              goal.currentAmount, 
-              goal.monthlyContribution, 
-              goal.expectedReturn, 
+              Number(goal.current_amount), 
+              2000000, // 예시 월 적립액
+              8, // 예시 기대 수익률
               monthsRemaining
             );
-            const onTrack = projectedAmount >= goal.targetAmount;
+            const onTrack = projectedAmount >= Number(goal.target_amount);
 
             return (
               <Card key={goal.id} className="bg-gradient-card shadow-card">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center gap-2">
-                      <Target className="w-5 h-5" />
+                      {goal.category === "주택구입" && <Home className="w-5 h-5" />}
+                      {goal.category === "교육" && <GraduationCap className="w-5 h-5" />}
+                      {goal.category === "은퇴준비" && <Target className="w-5 h-5" />}
+                      {goal.category === "여행" && <Plane className="w-5 h-5" />}
                       {goal.title}
                     </CardTitle>
                     <Badge variant={onTrack ? "default" : "destructive"}>
@@ -176,11 +158,11 @@ const Goals = () => {
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
                           <p className="text-muted-foreground">현재 자산</p>
-                          <p className="font-semibold text-lg">{goal.currentAmount.toLocaleString()}원</p>
+                          <p className="font-semibold text-lg">{Number(goal.current_amount).toLocaleString()}원</p>
                         </div>
                         <div>
                           <p className="text-muted-foreground">목표 자산</p>
-                          <p className="font-semibold text-lg">{goal.targetAmount.toLocaleString()}원</p>
+                          <p className="font-semibold text-lg">{Number(goal.target_amount).toLocaleString()}원</p>
                         </div>
                       </div>
                     </div>
@@ -190,7 +172,7 @@ const Goals = () => {
                       <div className="flex items-center gap-2 text-sm">
                         <Calendar className="w-4 h-4 text-muted-foreground" />
                         <span className="text-muted-foreground">목표 날짜:</span>
-                        <span className="font-medium">{goal.targetDate}</span>
+                        <span className="font-medium">{goal.target_date}</span>
                       </div>
                       
                       <div className="flex items-center gap-2 text-sm">
@@ -202,13 +184,13 @@ const Goals = () => {
                       <div className="flex items-center gap-2 text-sm">
                         <DollarSign className="w-4 h-4 text-muted-foreground" />
                         <span className="text-muted-foreground">월 적립액:</span>
-                        <span className="font-medium">{goal.monthlyContribution.toLocaleString()}원</span>
+                        <span className="font-medium">200만원 (예시)</span>
                       </div>
                       
                       <div className="flex items-center gap-2 text-sm">
                         <TrendingUp className="w-4 h-4 text-muted-foreground" />
                         <span className="text-muted-foreground">기대 수익률:</span>
-                        <span className="font-medium">{goal.expectedReturn}%</span>
+                        <span className="font-medium">8% (예시)</span>
                       </div>
                     </div>
                   </div>

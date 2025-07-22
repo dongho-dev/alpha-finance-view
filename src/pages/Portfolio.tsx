@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,66 +10,24 @@ import {
   MoreHorizontal,
   Plus
 } from "lucide-react";
+import { usePortfolioData } from "@/hooks/useSupabaseData";
 
 const Portfolio = () => {
-  const [holdings] = useState([
-    {
-      name: "삼성전자",
-      code: "005930",
-      shares: 100,
-      avgPrice: 65000,
-      currentPrice: 74500,
-      totalValue: 7450000,
-      gain: 950000,
-      gainPercent: 14.6,
-      sector: "기술"
-    },
-    {
-      name: "애플(AAPL)",
-      code: "AAPL",
-      shares: 50,
-      avgPrice: 180,
-      currentPrice: 185,
-      totalValue: 9250000,
-      gain: 250000,
-      gainPercent: 2.8,
-      sector: "기술"
-    },
-    {
-      name: "SK하이닉스",
-      code: "000660",
-      shares: 30,
-      avgPrice: 140000,
-      currentPrice: 132000,
-      totalValue: 3960000,
-      gain: -240000,
-      gainPercent: -5.7,
-      sector: "반도체"
-    },
-    {
-      name: "테슬라(TSLA)",
-      code: "TSLA",
-      shares: 20,
-      avgPrice: 250,
-      currentPrice: 245,
-      totalValue: 4900000,
-      gain: -100000,
-      gainPercent: -2.0,
-      sector: "자동차"
-    }
-  ]);
+  const { portfolios: holdings, sectorAllocations: sectorAllocation, loading } = usePortfolioData();
 
-  const sectorAllocation = [
-    { name: "기술", percentage: 42, amount: "42,000만원", color: "bg-chart-blue" },
-    { name: "반도체", percentage: 20, amount: "20,000만원", color: "bg-chart-green" },
-    { name: "자동차", percentage: 18, amount: "18,000만원", color: "bg-chart-purple" },
-    { name: "금융", percentage: 12, amount: "12,000만원", color: "bg-chart-orange" },
-    { name: "현금", percentage: 8, amount: "8,000만원", color: "bg-chart-red" }
-  ];
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-muted-foreground">데이터를 불러오는 중...</div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
-  const totalValue = holdings.reduce((sum, holding) => sum + holding.totalValue, 0);
-  const totalGain = holdings.reduce((sum, holding) => sum + holding.gain, 0);
-  const totalGainPercent = (totalGain / (totalValue - totalGain)) * 100;
+  const totalValue = holdings.reduce((sum, holding) => sum + Number(holding.total_value), 0);
+  const totalGain = holdings.reduce((sum, holding) => sum + Number(holding.gain), 0);
+  const totalGainPercent = totalValue > 0 ? (totalGain / (totalValue - totalGain)) * 100 : 0;
 
   return (
     <DashboardLayout>
@@ -154,27 +111,27 @@ const Portfolio = () => {
                           </div>
                           <div>
                             <p className="text-muted-foreground">평균단가</p>
-                            <p className="font-medium">{holding.avgPrice.toLocaleString()}원</p>
+                            <p className="font-medium">{Number(holding.avg_price).toLocaleString()}원</p>
                           </div>
                           <div>
                             <p className="text-muted-foreground">현재가</p>
-                            <p className="font-medium">{holding.currentPrice.toLocaleString()}원</p>
+                            <p className="font-medium">{Number(holding.current_price).toLocaleString()}원</p>
                           </div>
                           <div>
                             <p className="text-muted-foreground">평가금액</p>
-                            <p className="font-medium">{holding.totalValue.toLocaleString()}원</p>
+                            <p className="font-medium">{Number(holding.total_value).toLocaleString()}원</p>
                           </div>
                         </div>
                         
                         <div className="mt-3 flex items-center justify-between">
-                          <div className={`flex items-center ${holding.gain >= 0 ? 'text-success' : 'text-destructive'}`}>
-                            {holding.gain >= 0 ? <TrendingUp className="w-4 h-4 mr-1" /> : <TrendingDown className="w-4 h-4 mr-1" />}
+                          <div className={`flex items-center ${Number(holding.gain) >= 0 ? 'text-success' : 'text-destructive'}`}>
+                            {Number(holding.gain) >= 0 ? <TrendingUp className="w-4 h-4 mr-1" /> : <TrendingDown className="w-4 h-4 mr-1" />}
                             <span className="font-medium">
-                              {holding.gain >= 0 ? '+' : ''}{holding.gain.toLocaleString()}원 ({holding.gainPercent >= 0 ? '+' : ''}{holding.gainPercent.toFixed(1)}%)
+                              {Number(holding.gain) >= 0 ? '+' : ''}{Number(holding.gain).toLocaleString()}원 ({Number(holding.gain_percent) >= 0 ? '+' : ''}{Number(holding.gain_percent).toFixed(1)}%)
                             </span>
                           </div>
                           <Badge variant="outline" className="text-xs">
-                            {((holding.totalValue / totalValue) * 100).toFixed(1)}%
+                            {totalValue > 0 ? ((Number(holding.total_value) / totalValue) * 100).toFixed(1) : 0}%
                           </Badge>
                         </div>
                       </div>
