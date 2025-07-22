@@ -14,7 +14,333 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      accounts: {
+        Row: {
+          balance: number
+          created_at: string
+          id: string
+          name: string
+          status: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          balance: number
+          created_at?: string
+          id?: string
+          name: string
+          status: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          id?: string
+          name?: string
+          status?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      articles: {
+        Row: {
+          author: string
+          category: string
+          created_at: string
+          date: string
+          id: string
+          summary: string | null
+          title: string
+        }
+        Insert: {
+          author: string
+          category: string
+          created_at?: string
+          date: string
+          id?: string
+          summary?: string | null
+          title: string
+        }
+        Update: {
+          author?: string
+          category?: string
+          created_at?: string
+          date?: string
+          id?: string
+          summary?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      courses: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration: string
+          id: string
+          instructor: string
+          level: string
+          price: string
+          rating: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration: string
+          id?: string
+          instructor: string
+          level: string
+          price: string
+          rating: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration?: string
+          id?: string
+          instructor?: string
+          level?: string
+          price?: string
+          rating?: number
+          title?: string
+        }
+        Relationships: []
+      }
+      investment_goals: {
+        Row: {
+          category: string
+          created_at: string
+          current_amount: number
+          id: string
+          progress: number
+          target_amount: number
+          target_date: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          current_amount: number
+          id?: string
+          progress: number
+          target_amount: number
+          target_date: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          current_amount?: number
+          id?: string
+          progress?: number
+          target_amount?: number
+          target_date?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notification_settings: {
+        Row: {
+          created_at: string
+          earnings_reports: boolean
+          email_notifications: boolean
+          id: string
+          market_news: boolean
+          portfolio_updates: boolean
+          price_alerts: boolean
+          push_notifications: boolean
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          earnings_reports?: boolean
+          email_notifications?: boolean
+          id?: string
+          market_news?: boolean
+          portfolio_updates?: boolean
+          price_alerts?: boolean
+          push_notifications?: boolean
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          earnings_reports?: boolean
+          email_notifications?: boolean
+          id?: string
+          market_news?: boolean
+          portfolio_updates?: boolean
+          price_alerts?: boolean
+          push_notifications?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
+      performance_data: {
+        Row: {
+          alpha: number
+          benchmark_return: number
+          beta: number
+          created_at: string
+          id: string
+          period: string
+          portfolio_return: number
+          sharpe_ratio: number
+          user_id: string
+          volatility: number
+        }
+        Insert: {
+          alpha: number
+          benchmark_return: number
+          beta: number
+          created_at?: string
+          id?: string
+          period: string
+          portfolio_return: number
+          sharpe_ratio: number
+          user_id: string
+          volatility: number
+        }
+        Update: {
+          alpha?: number
+          benchmark_return?: number
+          beta?: number
+          created_at?: string
+          id?: string
+          period?: string
+          portfolio_return?: number
+          sharpe_ratio?: number
+          user_id?: string
+          volatility?: number
+        }
+        Relationships: []
+      }
+      portfolios: {
+        Row: {
+          avg_price: number
+          code: string
+          created_at: string
+          current_price: number
+          gain: number
+          gain_percent: number
+          id: string
+          name: string
+          sector: string
+          shares: number
+          total_value: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avg_price: number
+          code: string
+          created_at?: string
+          current_price: number
+          gain: number
+          gain_percent: number
+          id?: string
+          name: string
+          sector: string
+          shares: number
+          total_value: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avg_price?: number
+          code?: string
+          created_at?: string
+          current_price?: number
+          gain?: number
+          gain_percent?: number
+          id?: string
+          name?: string
+          sector?: string
+          shares?: number
+          total_value?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      sector_allocations: {
+        Row: {
+          amount: string
+          color: string
+          created_at: string
+          id: string
+          name: string
+          percentage: number
+          user_id: string
+        }
+        Insert: {
+          amount: string
+          color: string
+          created_at?: string
+          id?: string
+          name: string
+          percentage: number
+          user_id: string
+        }
+        Update: {
+          amount?: string
+          color?: string
+          created_at?: string
+          id?: string
+          name?: string
+          percentage?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          created_at: string
+          currency: string
+          display_name: string | null
+          email: string | null
+          id: string
+          language: string
+          phone: string | null
+          theme: string
+          timezone: string
+          two_factor_enabled: boolean
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          language?: string
+          phone?: string | null
+          theme?: string
+          timezone?: string
+          two_factor_enabled?: boolean
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          language?: string
+          phone?: string | null
+          theme?: string
+          timezone?: string
+          two_factor_enabled?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
